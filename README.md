@@ -111,7 +111,7 @@ $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.
 ### Description of commands and scripts 
 These scripts called in the command block above do the following: 
 >```
->$python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
+>$python UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
 >```
 >Takes the two RefSeq viral files and outputs a eukaryotic viral fasta file formatted with two lines per entry (header and sequences), as well as a phage file (same format). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. The directory for the update is, in this case, `./RVDBv30.0`.
 
@@ -162,7 +162,7 @@ The fourth file (“d.log” ending) is a side-by-side list of all file division
 
 ## **4. Running the main pipeline – TPA.** 
 The main pipeline consists of unzipping the TPA files and running the positive, size/mirna, and negative screens on the unzipped TPA files.
-###Main pipeline – TPA – command block
+### Main pipeline – TPA – command block
 Use the following concatenated and piped commands (described individually below). 
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_tpa_PIPE.py . apr.2025 30.0 fsa_nt.gz && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw tpa && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna tpa && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw tpa
@@ -362,18 +362,18 @@ $ cat raw-U-RVDBv30.0_clean_nonsarscov2.fasta raw-U-RVDBv30.0_sarscov2_N1.00.fas
 ```
 Where `raw-U-RVDBv30.0_sarscov2_N1.00.fasta` (from Step 7E) contains the quality-checked SARS-CoV-2 sequences with ≤ 1% ambiguity nucleotides. `duplicate_U-RVDBv30.0.txt` contains the records of duplicated sequences in U-RVDBv30.0. There should not be any duplicates.
 
-###B. Production of C-RVDB
-The following bash script combines clustered non-SARS-CoV-2 (Step 8B) and SARS-CoV-2 (Step 8A) sequences to make the C-RVDB release:
+### B. Production of C-RVDB
+The following bash script combines clustered non-SARS-CoV-2 [Step 8B](###B. Clustering of non-SARS-CoV-2 sequences) and SARS-CoV-2 [Step 8A](###A. Clustering of SARS-CoV-2 sequences) sequences to make the C-RVDB release:
 ```
 $cat C-RVDBv30.0_nonsarscov2_rep_seq.fasta raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta |seqkit rmdup -o C-RVDBv30.0.fasta -D duplicate_C-RVDBv30.0.txt
 ```
 Where `C-RVDBv30.0_nonsarscov2_rep_seq.fasta` (from Step 7E) and `raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta` contain the clustered non-SARS-CoV-2 and SARS-CoV-2 sequences produced in Step 8B and 8A, respectively. `duplicate_C-RVDBv30.0.txt` contains the records of duplicated sequences in C-RVDBv30.0. There should not be any duplicates.
 
 ## **10. Characterization** 
-###Overview 
+### Overview 
 The `RVDB_characterization.py` script was used to partition the sequences into five Level 1 categories: exogenous viral (EX), endogenous nonretroviral (ENRV), endogenous retroviral (ERV), LTR-retrotransposon (LTR_Reto), and unassigned viral gene /fragments (Unassigned). This partitioning was done using some of the SEM-R positive keywords, and organizing them by categories. Sequences possessing headers with specific positive keywords from SEM-R screen were placed into the corresponding categories. For instance, the keywords “retrotranspos”,”retro transpos”,”retroelem”,”blastopia “,” copia “,” delta element”,” gipsy “,” gypsy element”,” gypsy like “,” gypsy type “, “insertion element”, ” mdg1 “, ” mdg3 “, ”micropia”, “ sire “,” ty element”, and “ ty insertion” were used to classify sequences as belonging to the LTR-retrotransposon category. There is also a regular expression for finding strings of the form “ ty” + either “1” or “3”, with / without a space, and there are also a handful of rules for pulling in the less common LTR-retrotransposons: the string “transpos” + either “ bel “, “ pao “, “ roo “, or “morgane”. There are similar combinations of keywords, regular expressions, and rules for the other four groups. 
 
-###Running `RVDB_characterization.py` 
+### Running `RVDB_characterization.py` 
 The `RVDB_characterization.py script` can be run by a single line in the command shell, containing python command, the script name, and then 5 parameters: the home or parent directory (one level below the update folder), the date tag for the update, the current version of the update, the name of the fasta file to be characterized (e.g. `U-RVDBv30.0.fasta`), and a filename containing a filterset, an accession list for a subset of sequences to be characterized. The last two parameters can be selected so that the script can be run not just on the base unclustered form of RVDB, but also the clustered form of RVDB, or any special-purpose sub-version created by the user. Please note, if all sequences from the supplied fasta file are to be characterized, there is no filterset and the final parameter can be a random letter (e.g. “NA”). Below is an example of running the script:
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/RVDB_characterization.py . apr.2025 30.0 U-RVDBv30.0.fasta NA
@@ -412,5 +412,5 @@ $md5sum U-RVDBv30.0.fasta > U-RVDBv30.0.fasta.md5
 $md5sum C-RVDBv30.0.fasta > C-RVDBv30.0.fasta.md5
 $md5sum U-RVDBv30.0.sqlite.db > U-RVDBv30.0.fasta.md5
 ```
-** And most of all, enjoy RVDB! ** 
+**And most of all, enjoy RVDB!** 
 
