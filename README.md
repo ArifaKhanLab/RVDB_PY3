@@ -103,11 +103,13 @@ mget *tpa*nt.gz
 ## **3. Running the main pipeline – RefSeq and GenBank.** 
 The main pipeline performs the core series of operations on the downloaded RefSeq, GenBank, and TPA files. In order, this includes unzipping RefSeq viral, removing phage, pulling in viral neighbor annotation, identifying duplicates of RefSeq (original GenBank entries from which RefSeq entries were created), unzipping and formatting GenBank entries, running checkpoint2 to cross-reference GenBank file contents with the official release notes, and running the positive, size/mirna, and negative screens on GenBank files. 
 
-**Main pipeline – RefSeq and GenBank - command block.** Navigate to the parent folder (`RVDB` in this example). Use the following concatenated commands (described individually beneath the command block):
+###Main pipeline – RefSeq and GenBank - command block 
+Navigate to the parent folder (`RVDB` in this example). Use the following concatenated commands (described individually beneath the command block):
 ```
 $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz && python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff && python  UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0 gbff 1000000 && python  UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0 && python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb && python UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py  . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
 ```
-**Description of commands and scripts.** These scripts called in the command block above do the following: 
+###Description of commands and scripts 
+These scripts called in the command block above do the following: 
 >```
 >$python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
 >```
@@ -160,7 +162,8 @@ The fourth file (“d.log” ending) is a side-by-side list of all file division
 
 ## **4. Running the main pipeline – TPA.** 
 The main pipeline consists of unzipping the TPA files and running the positive, size/mirna, and negative screens on the unzipped TPA files.
-**Main pipeline – TPA – command block.** Use the following concatenated and piped commands (described individually below). 
+###Main pipeline – TPA – command block
+Use the following concatenated and piped commands (described individually below). 
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_tpa_PIPE.py . apr.2025 30.0 fsa_nt.gz && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw tpa && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna tpa && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw tpa
 ```
@@ -186,34 +189,47 @@ $python UPDATE_SCRIPTS_LOGS_PY3/create_U-RVDB_file.py . apr.2025 30.0 RVDBv30.0.
 ## **7. Raw U-RVDB post-processing**
 The post-processing of U-RVDB contains the removal of phage sequences based on the taxonomy, post-editing of newly-added list from Step 5, and removal of SARS-CoV-2 sequences with ≥ 1% poly Ns. 
 Firstly, navigate to the RVDB release folder (RVDBv30.0 in this example):
+```
 $ cd RVDBv30.0
-
-A.	Taxonomy-based phage removal
+```
+###A. Taxonomy-based phage removal
 This step contains the retrieval of all phage-associated taxonomy IDs (TaxIDs) down to the species level, cross- referencing phage-associated TaxIDs to accession IDs (AccIDs), and filtrating phage-associated AccIDS from raw-U-RVDB.
 
-First, navigate to the RVDB sub-directory (RVDBv30.0 in this example), and prompt the following commands:
+First, navigate to the RVDB sub-directory (`RVDBv30.0` in this example), and prompt the following commands:
+```
 $awk -F ";" '{print $2}' ../rvdb_update_pipeline/phage_taxid.list | xargs -I{} get_species_taxids.sh -t {} > allphage_taxid.list 
-
-From the phage_taxid.list, get all phage-associated TaxIDs down to the species level. The file format of phage_taxid.list is [family_name;taxID] in case that users want to append the phage family. 
+```
+From the `phage_taxid.list`, get all phage-associated TaxIDs down to the species level. The file format of `phage_taxid.list` is [family_name;taxID] in case that users want to append the phage family. 
 
 The following bash script downloads the AccID-TaxID cross reference file from NCBI and remove its header to facilitate the joining process.
+```
 $ wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz && gunzip -f -d nucl_gb.accession2taxid.gz
 $ tail -n +2 nucl_gb.accession2taxid > nucl_gb.accession2taxid_noheader
+```
 
-The following bash script joining the allphage_taxid_list with nucl_gb.accession2taxid_noheader by using taxID field as the key. The output “allphage_acc.list” contains phage-associated AccIDs.
+The following bash script joining the allphage_taxid_list with `nucl_gb.accession2taxid_noheader` by using taxID field as the key. The output `allphage_acc.list` contains phage-associated AccIDs.
+```
 $ join -1 3 -2 1 -t $'\t' -o 1.1,1.2,1.3,2.1 <(sort -k 3,3 nucl_gb.accession2taxid_noheader) <(sort -k 1,1 allphage_taxid.list) > allphage_acc.list
+```
 
 The following two bash scripts retrieve the fasta headers from raw-U-RVDB and output phage-associated headers.
+```
 $ grep ">" raw-U-RVDBv30.0.fasta > raw-U-RVDBv30.0.fasta_header
 $ join -1 2 -2 2 -t $'\t' -o 1.1,2.2,1.2,1.3,1.4,1.5,1.6 <(awk -F "|" '{print $2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' raw-U-RVDBv30.0.fasta_header|sort -k 2,2) <(sort -k 2,2 allphage_acc.list) > U-RVDBv30.0_phage_candidate.list
+```
 
-The following bash script scans the presence of phage sequences in the newly-added list to facilitate the manual review process (Step 5)
+The following three bash scripts scan the presence of phage sequences in the newly-added list to facilitate the manual review process (Step 5)
+```
 $ csvformat -T RVDBv30.0.new.csv > RVDBv30.0.new.tsv
 $tail -n +2 RVDBv30.0.new.tsv > RVDBv30.0.new.tsv_noheader
 $ join -1 2 -2 2 -t $'\t' -o 1.1,2.2,1.2,1.3 <(awk -F "|" '{print $0}' RVDBv30.0.new.tsv_noheader|sort -k 2,2) <(sort -k 2,2 allphage_acc.list) > U-RVDBv30.0_phage_newly-added.list
+```
 
-B.	Post-editing the newly-added list
-The purposes to post-edit the newly-added list are to remove the following entries to reduce the burdon of manual review process (Step5): 1) the SARS-CoV-2 records from newly-added list since they are abundant and truly viral, 2) non-viral records manually identified in the previous RVDB release(s), if any, and 3) the phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
+###B. Post-editing the newly-added list
+The purposes to post-edit the newly-added list are to remove the following entries to reduce the burdon of manual review process (Step5): 
+1.The SARS-CoV-2 records from newly-added list since they are abundant and truly viral, 
+2.Non-viral records manually identified in the previous RVDB release(s), if any, and 
+3.The phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
 
 The following bash script removes millions of SARS-CoV-2 records from the newly-added list:
 $awk -F "\t" '{if ($4!="Severe acute respiratory syndrome coronavirus 2") print $0}' RVDBv30.0.new.tsv > RVDBv30.0.new_wo_SARSCoV2.tsv
