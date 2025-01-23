@@ -176,7 +176,8 @@ $python UPDATE_SCRIPTS_LOGS/prep_manual_review.py . apr.2025 30.0 ./RVDBv29.0/U-
 ## **6. Creation of raw RVDB fasta files**
 In the old Python 2 RVDB production pipeline, this is the last step to generate U-RVDB. We have implemented several improvements and refinements described in the publication along with the Python 3 conversion: **1)** Taxonomy-based phage removal, **2)** poly N filtration for SARS-CoV-2, and **3)** Replacement of clustering algorithm from CD-HIT-EST to Many-against-Many sequence searching (MMseqs2). Therefore, the `U-RVDBv[version].fasta` is now served as the intermediate, raw U-RVDB for the downstream process instead of the final product in the old Python 2 pipeline. We chosed not to replace the Python 3 script name to ensure the backward compatibility. 
    
-### **Creation of raw U-RVDB fasta file.** Following manual review, the unclustered raw RVDB fasta file can be generated using the script `create_U-RVDB_file.py`. Navigate to the home or parent directory (`RVDB` in this example) and enter the following command:
+### Creation of raw U-RVDB fasta file
+Following manual review, the unclustered raw RVDB fasta file can be generated using the script `create_U-RVDB_file.py`. Navigate to the home or parent directory (`RVDB` in this example) and enter the following command:
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/create_U-RVDB_file.py . apr.2025 30.0 RVDBv30.0.removeaccs.txt
 ```
