@@ -31,16 +31,19 @@ $cd RVDB
 $mkdir RVDBv30.0
 ```
 
-The folder structure for an RVDB update is three separate main folders for GenBank, TPA, and RefSeq sequences, in *_“$month”.”$year” format. For example, if the month were apr and the year 2025, the folders could be created using the following command: 
+The folder structure for an RVDB update is three separate main folders for GenBank, TPA, and RefSeq sequences, in `*_“$month”.”$year”` format. For example, if the month were apr and the year 2025, the folders could be created using the following command: 
+```
 $cd RVDBv30.0
 $mkdir GenBank_raw_data_apr.2025 && mkdir TPA_raw_data_apr.2025 && mkdir RefSeq_raw_data_apr.2025
-
-The sub-folder structure for an RVDB update depends on the main folder. All main folders have “log” and “scripts” sub-folders. The main GenBank and TPA folders also have poskw_out_”$month”.”$year”, sizemirna_out_”$month”.”$year”, and negkw_out_”$month”.”$year sub-folders. So, for example, for the GenBank main folder you could enter the following commands:
+```
+The sub-folder structure for an RVDB update depends on the main folder. All main folders have `log` and `scripts` sub-folders. The main GenBank and TPA folders also have `poskw_out_”$month”.”$year”`, `sizemirna_out_”$month”.”$year”`, and `negkw_out_”$month”.”$year` sub-folders. So, for example, for the GenBank main folder you could enter the following commands:
+```
 $cd GenBank_raw_data_apr.2025
 $mkdir log && mkdir scripts && mkdir poskw_out_apr.2025 && mkdir sizemirna_out_ apr.2025 && mkdir negkw_out_ apr.2025
-
-2. Download raw sequences from NCBI FTP
-RefSeq viral. Navigate to the RefSeq main folder, log on to NCBI’s RefSeq ftp site, ftp.ncbi.nih.gov/refseq/release/viral, and download the four files: viral.1.1.genomic.fna.gz (fasta file), viral.2.1.genomic.fna.gz (fasta file), viral.1.genomic.gbff.gz (genbank flat file), and viral.2.genomic.gbff.gz (genbank flat file). This can be done using the ftp command:
+```
+## **2. Download raw sequences from NCBI FTP**
+**RefSeq viral.** Navigate to the RefSeq main folder, log on to [NCBI’s RefSeq ftp site] (ftp.ncbi.nih.gov/refseq/release/viral), and download the four files: `viral.1.1.genomic.fna.gz (fasta file)`, `viral.2.1.genomic.fna.gz (fasta file)`, `viral.1.genomic.gbff.gz (genbank flat file)`, and `viral.2.genomic.gbff.gz (genbank flat file)`. This can be done using the ftp command:
+```
 $ftp ftp.ncbi.nih.gov
 anonymous
 anonymous
@@ -50,8 +53,8 @@ cd viral
 binary
 prompt
 mget viral*genomic*gz
-
-RefSeq viral neighbors. This is one of only two parts that requires manually  downloading some files:
+```
+**RefSeq viral neighbors.** This is one of only two parts that requires manually  downloading some files:
 Save the downloaded file in the Refseq data folder as “refseqviral_neighbors_mapping.$date.nbr”, where $date is the full date in “month.day.year” format (example “refseqviral_neighbors_mapping.apr.23.2025.nbr”) in the Refseq main folder.
 $wget https://ftp.ncbi.nlm.nih.gov/genomes/Viruses/Viruses_RefSeq_and_neighbors_genome_data.tab -O refseqviral_neighbors_mapping.apr.23.2025.nbr
 
