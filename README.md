@@ -227,9 +227,9 @@ $ join -1 2 -2 2 -t $'\t' -o 1.1,2.2,1.2,1.3 <(awk -F "|" '{print $0}' RVDBv30.0
 
 ### B. Post-editing the newly-added list
 The purposes to post-edit the newly-added list are to remove the following entries to reduce the burdon of manual review process (Step5): 
-1.The SARS-CoV-2 records from newly-added list since they are abundant and truly viral, 
-2.Non-viral records manually identified in the previous RVDB release(s), if any, and, 
-3.The phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
+1. The SARS-CoV-2 records from newly-added list since they are abundant and truly viral, 
+2. Non-viral records manually identified in the previous RVDB release(s), if any, and, 
+3. The phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
 
 The following bash script removes millions of SARS-CoV-2 records from the newly-added list:
 $awk -F "\t" '{if ($4!="Severe acute respiratory syndrome coronavirus 2") print $0}' RVDBv30.0.new.tsv > RVDBv30.0.new_wo_SARSCoV2.tsv
