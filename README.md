@@ -121,7 +121,7 @@ These scripts called in the command block above do the following:
 >Combines the two GenBank flat files for refseq viral into one. “.” is the home or parent  directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.
 
 >```
->$ python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0  gbff 1000000
+>$ python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0 gbff 1000000
 >```
 >Splits the combined GenBank flat file into multiple files, so that each can be read into Python. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gbff` is the file type used as input, and `1000000` is the number of entries to include in each split. 
 
