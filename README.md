@@ -89,7 +89,7 @@ prompt
 mget gbenv*seq.gz gbhtc*.seq.gz gbinv*.seq.gz gbmam*.seq.gz gbpln*.seq.gz gbpri*.seq.gz gbrod*.seq.gz gbvrl*.seq.gz gbvrt*.seq.gz
 ```
 Also, the official release notes must be downloaded from the GenBank website using a web browser. While this could be done using ftp, the name of the release notes file has to be passed as a parameter later, so it’s best to directly download it and save the file name for later. Visit [NCBI Genbank ftp site](ftp://ftp.ncbi.nih.gov/genbank) and download `gbrel.txt`. Save this file in `gb_releasenotes_v$version_$month.$year.txt` format, for example `gb_releasenotes_v265_apr.2025.txt`. 
-**TPA.*** Navigate to the TPA main folder, log on to [NCBI TPA ftp site](ftp.ncbi.nih.gov/tpa/release), and download TPA sequence files `tpa_cu.fsa_nt.gz` and `con_tpa_cu.fsa_nt.gz`. Note that there is no meta-data and therefore not `.gbff` format files for TPA sequences. The download can be done using the following ftp command:
+**TPA.** Navigate to the TPA main folder, log on to [NCBI TPA ftp site](ftp.ncbi.nih.gov/tpa/release), and download TPA sequence files `tpa_cu.fsa_nt.gz` and `con_tpa_cu.fsa_nt.gz`. Note that there is no meta-data and therefore not `.gbff` format files for TPA sequences. The download can be done using the following ftp command:
 ```
 $ftp ftp.ncbi.nih.gov
 anonymous
@@ -103,20 +103,29 @@ mget *tpa*nt.gz
 ## **3. Running the main pipeline – RefSeq and GenBank.** 
 The main pipeline performs the core series of operations on the downloaded RefSeq, GenBank, and TPA files. In order, this includes unzipping RefSeq viral, removing phage, pulling in viral neighbor annotation, identifying duplicates of RefSeq (original GenBank entries from which RefSeq entries were created), unzipping and formatting GenBank entries, running checkpoint2 to cross-reference GenBank file contents with the official release notes, and running the positive, size/mirna, and negative screens on GenBank files. 
 
-Main pipeline – RefSeq and GenBank - command block. Navigate to the parent folder (“RVDB” in this example). Use the following concatenated commands (described individually beneath the command block):
+**Main pipeline – RefSeq and GenBank - command block.** Navigate to the parent folder (`RVDB` in this example). Use the following concatenated commands (described individually beneath the command block):
+```
 $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz && python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff && python  UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0 gbff 1000000 && python  UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0 && python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb && python UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py  . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
-
-Description of commands and scripts. These scripts called in the command block above do the following: 
+```
+**Description of commands and scripts.** These scripts called in the command block above do the following: 
+```
 $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
-Takes the two RefSeq viral files and outputs a eukaryotic viral fasta file formatted with two lines per entry (header and sequences), as well as a phage file (same format). “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. The directory for the update is, in this case, ./RVDBv30.0. 
+```
+Takes the two RefSeq viral files and outputs a eukaryotic viral fasta file formatted with two lines per entry (header and sequences), as well as a phage file (same format). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. The directory for the update is, in this case, `./RVDBv30.0`. 
 
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff
+```
 Combines the two GenBank flat files for refseq viral into one. “.” is the home or parent  directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.
 
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0  gbff 1000000
-Splits the combined GenBank flat file into multiple files, so that each can be read into Python. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “gbff” is the file type used as input, and 1000000 is the number of entries to include in each split. 
+```
+Splits the combined GenBank flat file into multiple files, so that each can be read into Python. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gbff` is the file type used as input, and `1000000` is the number of entries to include in each split. 
 
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0
+```
 Using the GenBank flat file metadata for RefSeq viral, finds the duplicate entries’ accessions (original entries, upon which RefSeq viral entries were based). “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. Also uses the RefSeq viral neighbors mapping file to complete the mapping (here, “./RVDBv30.0/RefSeq_raw_data.apr.2025/ refseqviral_neighbors_mapping.apr.23.2025.csv”; this filename is hard-coded into the script). The neighbors are saved in the file (here “./RVDBv30.0/RefSeq_raw_data.apr.2025/neighbor_accs.txt”); this filename is hard-coded into the next script, which is the unzipping script. The RefSeq duplicate accessions are saved in the file “./RVDBv30.0/RefSeq_raw_data.apr.2025/refseq_viral_originalaccs.txt” ; this filename is also hard-coded as input for the unzipping script. 
 
 $python  UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
