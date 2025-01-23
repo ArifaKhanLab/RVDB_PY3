@@ -137,11 +137,11 @@ $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.
 >$python  UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
 >```
 >`.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gb_releasenotes_v265_apr.2025.txt` is the name of the release notes file that was >downloaded from the GenBank ftp site. 
->Runs checkpoint2, generates four output files: `./RVDB[version]/GenBank_raw_data_month.year/log/[version]_checkpt2[a,b,c,d].log`. Note, the names of unzipped files are hard-coded into the semantic screen script that is called next: `SEM-R_june62018_PIPE.py`, which is >described below. 
->The first file (“a.log” ending) is a print-out of a running total of files / division, seqs / division, after each .seq.gz file is read. This file is time-stamped, so it’s main purpose is to show a continuous timeline of the unzipping process.
->The second file (“b.log” ending) is a summary of the unzipping process, showing total #sequences for each file (basically shortened version of 2a). This is more convenient for looking at entry totals. This format is the same format as the official release notes. 
->The third file (“c.log” ending) is a side-by-side list of all file counts, the official release notes counts and the downloaded + unzipped counts. 
->The fourth file (“d.log” ending) is a side-by-side list of all file division counts, the official release notes counts and the downloaded + unzipped counts. This is a summary form of c.log, with totals by division rather than file.
+Runs checkpoint2, generates four output files: `./RVDB[version]/GenBank_raw_data_month.year/log/[version]_checkpt2[a,b,c,d].log`. Note, the names of unzipped files are hard-coded into the semantic screen script that is called next: `SEM-R_june62018_PIPE.py`, which is >described below. 
+The first file (“a.log” ending) is a print-out of a running total of files / division, seqs / division, after each .seq.gz file is read. This file is time-stamped, so it’s main purpose is to show a continuous timeline of the unzipping process.
+The second file (“b.log” ending) is a summary of the unzipping process, showing total #sequences for each file (basically shortened version of 2a). This is more convenient for looking at entry totals. This format is the same format as the official release notes. 
+The third file (“c.log” ending) is a side-by-side list of all file counts, the official release notes counts and the downloaded + unzipped counts. 
+The fourth file (“d.log” ending) is a side-by-side list of all file division counts, the official release notes counts and the downloaded + unzipped counts. This is a summary form of c.log, with totals by division rather than file.
 
 >```
 >$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb
