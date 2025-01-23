@@ -363,7 +363,7 @@ $ cat raw-U-RVDBv30.0_clean_nonsarscov2.fasta raw-U-RVDBv30.0_sarscov2_N1.00.fas
 Where `raw-U-RVDBv30.0_sarscov2_N1.00.fasta` (from Step 7E) contains the quality-checked SARS-CoV-2 sequences with ≤ 1% ambiguity nucleotides. `duplicate_U-RVDBv30.0.txt` contains the records of duplicated sequences in U-RVDBv30.0. There should not be any duplicates.
 
 ### B. Production of C-RVDB
-The following bash script combines clustered non-SARS-CoV-2 [Step 8B](### B. Clustering of non-SARS-CoV-2 sequences) and SARS-CoV-2 [Step 8A](### A. Clustering of SARS-CoV-2 sequences) sequences to make the C-RVDB release:
+The following bash script combines clustered non-SARS-CoV-2 [Step 8B](### B.-Clustering-of-non-SARS-CoV-2-sequences) and SARS-CoV-2 [Step 8A](### A.-Clustering-of-SARS-CoV-2-sequences) sequences to make the C-RVDB release:
 ```
 $cat C-RVDBv30.0_nonsarscov2_rep_seq.fasta raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta |seqkit rmdup -o C-RVDBv30.0.fasta -D duplicate_C-RVDBv30.0.txt
 ```
