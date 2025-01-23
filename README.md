@@ -116,29 +116,30 @@ $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.
 >```
 >$python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff
 >```
->>Combines the two GenBank flat files for refseq viral into one. “.” is the home or parent  directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.
+>Combines the two GenBank flat files for refseq viral into one. “.” is the home or parent  directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.
 
-```
-$python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0  gbff 1000000
-```
+>```
+>$python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0  gbff 1000000
+>```
 >Splits the combined GenBank flat file into multiple files, so that each can be read into Python. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gbff` is the file type used as input, and `1000000` is the number of entries to include in each split. 
 
-```
-$python UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0
-```
+>```
+>$python UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0
+>```
 >Using the GenBank flat file metadata for RefSeq viral, finds the duplicate entries’ accessions (original entries, upon which RefSeq viral entries were based). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. Also uses the RefSeq viral neighbors mapping file to complete the mapping (here, `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseqviral_neighbors_mapping.apr.23.2025.csv`; this filename is hard-coded into the script). The neighbors are saved in the file (here `./RVDBv30.0/RefSeq_raw_data.apr.2025/neighbor_accs.txt`); this filename is hard-coded into the next script, which is the unzipping script. The RefSeq duplicate accessions are saved in the file `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseq_viral_originalaccs.txt` ; this filename is also hard-coded as input for the unzipping script. 
-```
-$python  UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
-```
->Unzips the GenBank division files, labels sequences that are RefSeq viral neighbors during the unzipping. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. 
-<br/>
-$python  UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
-“.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “gb_releasenotes_v265_apr.2025.txt” is the name of the release notes file that was downloaded from the GenBank ftp site. 
-Runs checkpoint2, generates four output files: ./RVDB[version]/GenBank_raw_data_month.year/log/[version]_checkpt2[a,b,c,d].log”. Note, the names of unzipped files are hard-coded into the semantic screen script that is called next: SEM-R_june62018_PIPE.py, which is described below. 
-The first file (“a.log” ending) is a print-out of a running total of files / division, seqs / division, after each .seq.gz file is read. This file is time-stamped, so it’s main purpose is to show a continuous timeline of the unzipping process.
-The second file (“b.log” ending) is a summary of the unzipping process, showing total #sequences for each file (basically shortened version of 2a). This is more convenient for looking at entry totals. This format is the same format as the official release notes. 
-The third file (“c.log” ending) is a side-by-side list of all file counts, the official release notes counts and the downloaded + unzipped counts. 
-The fourth file (“d.log” ending) is a side-by-side list of all file division counts, the official release notes counts and the downloaded + unzipped counts. This is a summary form of c.log, with totals by division rather than file.
+>```
+>$python  UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
+>```
+>Unzips the GenBank division files, labels sequences that are RefSeq viral neighbors during the unzipping. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. 
+>```
+>$python  UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
+>```
+>`.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gb_releasenotes_v265_apr.2025.txt` is the name of the release notes file that was >downloaded from the GenBank ftp site. 
+>Runs checkpoint2, generates four output files: `./RVDB[version]/GenBank_raw_data_month.year/log/[version]_checkpt2[a,b,c,d].log`. Note, the names of unzipped files are hard-coded into the semantic screen script that is called next: `SEM-R_june62018_PIPE.py`, which is >described below. 
+>The first file (“a.log” ending) is a print-out of a running total of files / division, seqs / division, after each .seq.gz file is read. This file is time-stamped, so it’s main purpose is to show a continuous timeline of the unzipping process.
+>The second file (“b.log” ending) is a summary of the unzipping process, showing total #sequences for each file (basically shortened version of 2a). This is more convenient for looking at entry totals. This format is the same format as the official release notes. 
+>The third file (“c.log” ending) is a side-by-side list of all file counts, the official release notes counts and the downloaded + unzipped counts. 
+>The fourth file (“d.log” ending) is a side-by-side list of all file division counts, the official release notes counts and the downloaded + unzipped counts. This is a summary form of c.log, with totals by division rather than file.
 
 $python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb
 Runs the positive keyword screen. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “poskw” is the type of screen, “gb” is the source database. Generates files ending in “pscreen” as output. All files generated as output are used as input for the sizemirna screen. 
