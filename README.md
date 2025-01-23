@@ -1,4 +1,4 @@
-# RVDB_PY3
+# **RVDB_PY3**
 This is the repository of RVDB production scripts written by Python3 to replace the scripts in RVDB old repository which were  written by Python 2. Additionally, several improvements and refinements were implemented since the old release. 
 # **Instructions for updating RVDB_PY3 by RVDB_PY3 scripts**
 
@@ -103,7 +103,7 @@ mget *tpa*nt.gz
 ## **3. Running the main pipeline – RefSeq and GenBank.** 
 The main pipeline performs the core series of operations on the downloaded RefSeq, GenBank, and TPA files. In order, this includes unzipping RefSeq viral, removing phage, pulling in viral neighbor annotation, identifying duplicates of RefSeq (original GenBank entries from which RefSeq entries were created), unzipping and formatting GenBank entries, running checkpoint2 to cross-reference GenBank file contents with the official release notes, and running the positive, size/mirna, and negative screens on GenBank files. 
 
-###Main pipeline – RefSeq and GenBank - command block 
+### Main pipeline – RefSeq and GenBank - command block 
 Navigate to the parent folder (`RVDB` in this example). Use the following concatenated commands (described individually beneath the command block):
 ```
 $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz && python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff && python  UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0 gbff 1000000 && python  UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0 && python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb && python UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py  . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
@@ -177,7 +177,11 @@ $python UPDATE_SCRIPTS_LOGS/prep_manual_review.py . apr.2025 30.0 ./RVDBv29.0/U-
 `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `./RVDBv29.0/U-RVDBv29.0.fasta` is the full path to the previous, unclustered version of the database (if you want, you can also compare to any other version of RVDB). The script outputs two files into the main folder of the update: `RVDBv$version.missing.csv` and `RVDBv$version.new.csv`, e.g. `RVDBv30.0.missing.csv` and `RVDBv30.0.new.csv`.
 
 ## **6. Creation of raw RVDB fasta files**
-In the old Python 2 RVDB production pipeline, this is the last step to generate U-RVDB. We have implemented several improvements and refinements described in the publication along with the Python 3 conversion: **1)** Taxonomy-based phage removal, **2)** poly N filtration for SARS-CoV-2, and **3)** Replacement of clustering algorithm from CD-HIT-EST to Many-against-Many sequence searching (MMseqs2). Therefore, the `U-RVDBv[version].fasta` is now served as the intermediate, raw U-RVDB for the downstream process instead of the final product in the old Python 2 pipeline. We chosed not to replace the Python 3 script name to ensure the backward compatibility. 
+In the old Python 2 RVDB production pipeline, this is the last step to generate U-RVDB. We have implemented several improvements and refinements described in the publication along with the Python 3 conversion: 
+1. Taxonomy-based phage removal, 
+2. Poly N filtration for SARS-CoV-2, and, 
+3. Replacement of clustering algorithm from CD-HIT-EST to Many-against-Many sequence searching (MMseqs2).
+Therefore, the `U-RVDBv[version].fasta` is now served as the intermediate, raw U-RVDB for the downstream process instead of the final product in the old Python 2 pipeline. We chosed not to replace the Python 3 script name to ensure the backward compatibility. 
    
 ### Creation of raw U-RVDB fasta file
 Following manual review, the unclustered raw RVDB fasta file can be generated using the script `create_U-RVDB_file.py`. Navigate to the home or parent directory (`RVDB` in this example) and enter the following command:
@@ -232,136 +236,181 @@ The purposes to post-edit the newly-added list are to remove the following entri
 3. The phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
 
 The following bash script removes millions of SARS-CoV-2 records from the newly-added list:
+```
 $awk -F "\t" '{if ($4!="Severe acute respiratory syndrome coronavirus 2") print $0}' RVDBv30.0.new.tsv > RVDBv30.0.new_wo_SARSCoV2.tsv
+```
 
 The following bash script scans the records in the removal list from previous RVDB release (if any) and excludes them from the current newly-added list:
+```
 $awk -F "\t" 'NR == FNR {a[$1]; next} !($2 in a)' ../RVDBv29.0/v29.0_removeaccs.txt RVDBv30.0.new_wo_SARSCoV2.tsv > RVDBv30.0.new_wo_SARSCoV2_v30.0_removelist.tsv
+```
 
-In case you don’t have the previous removal list, please provide an empty file named “dummy.txt” and run the following bash script:
+In case you don’t have the previous removal list, please provide an empty file named `dummy.txt` and run the following bash script:
+```
 $awk -F "\t" 'NR == FNR {a[$1]; next} !($2 in a)' dummy.txt RVDBv30.0.new_wo_SARSCoV2.tsv > RVDBv30.0.new_wo_SARSCoV2_v30.0_removelist.tsv
+```
 
- The following bash script removes the phage records generated from Step 7A:
+The following bash script removes the phage records generated from Step 7A:
+```
 $awk -F "\t" 'NR == FNR {a[$2]; next} !($2 in a)' U-RVDBv30.0_phage_newly-added.list RVDBv30.0.new_wo_SARSCoV2_v30.0_removelist.tsv > RVDBv30.0.newly-added_wo_SARSCoV2_wo_phage.tsv
+```
+The final newly-added list named `RVDBv30.0.newly-added_wo_SARSCoV2_wo_phage.tsv` is ready for the manual review.
 
-The final newly-added list named “RVDBv30.0.newly-added_wo_SARSCoV2_wo_phage.tsv” is ready for the manual review.
-
-C.	Separation of non-SARS-CoV-2 and SARS-CoV-2 sequences
+### C. Separation of non-SARS-CoV-2 and SARS-CoV-2 sequences
 Since the non- SARS-CoV-2 and SARS-CoV-2 sequences would be subjected to the different collapsing or clustering algorithm, and the poly N filtration is being implement to SARS-CoV-2 sequence exclusively. Therefore it is necessary to separate non- and SARS-CoV-2 sequences.
-Please prompt the following three bash scripts to separate non- SARS-CoV-2  and SARS-CoV-2 sequences from raw-U-RVDBv30.0.fasta
+Please prompt the following three bash scripts to separate non- SARS-CoV-2  and SARS-CoV-2 sequences from `raw-U-RVDBv30.0.fasta`.
+```
 $grep ">" raw-U-RVDBv30.0.fasta|sed 's/>//' > raw-U-RVDB v30.0_header && awk -F "|" '{if ($5 == "Severe acute respiratory syndrome coronavirus 2") print $0}' raw-U-RVDBv30.0_header > raw-U-RVDBv30.0_sarscov2
 $filterbyname.sh in=raw-U-RVDBv30.0.fasta out=raw-U-RVDBv30.0_sarscov2.fasta names=raw-U-RVDBv30.0_sarscov2 include=t ow=t
 $filterbyname.sh in=raw-U-RVDBv30.0.fasta out=raw-U-RVDBv30.0_nonsarscov2.fasta names=raw-U-RVDBv30.0_sarscov2 include=f ow=t
+```
+`raw-U-RVDBv30.0_nonsarscov2.fasta` and `raw-U-RVDBv30.0_sarscov2.fasta` contain the collection of non- and SARS-CoV-2 sequences, respectively. 
 
-“raw-U-RVDBv30.0_nonsarscov2.fasta” and “raw-U-RVDBv30.0_sarscov2.fasta” contain the collection of non- and SARS-CoV-2 sequences, respectively. 
-
-D.	Scanning the ambiguity nucleotide base in SARS-CoV-2 sequences
-The SARS-CoV-2 sequences are subjected to the ambiguity nucleotide (poly N) screening to remove the sequences containing ≥ 1% poly Ns. The binary file “N_counter” in the folder “UPDATE_SCRIPTS_LOGS_PY3” was written in C and precompiled by Unix gcc. The source code of N-counter is available under the same folder named “N_counter.c” for users to compile based on their operation system and setup. Please prompt the following command to make it executable:
-
+### D. Scanning the ambiguity nucleotide base in SARS-CoV-2 sequences
+The SARS-CoV-2 sequences are subjected to the ambiguity nucleotide (poly N) screening to remove the sequences containing ≥ 1% poly Ns. The binary file `N_counter` in the folder `UPDATE_SCRIPTS_LOGS_PY3` was written in C and precompiled by Unix gcc. The source code of N-counter is available under the same folder named `N_counter.c` for users to compile based on their operation system and setup. Please prompt the following command to make it executable:
+```
 $ chmod +x ../UPDATE_SCRIPTS_LOGS_PY3/N_counter
+```
 
 And run the following bash script to generate the list of ambiguity nucleotide composition for SARS-CoV-2 sequences:
+```
 $../UPDATE_SCRIPTS_LOGS_PY3/N_counter < raw-U-RVDBv30.0_sarscov2.fasta |sort -t $'\t' -nrk5 > raw-U-RVDBv30.0_sarscov2_N_counter.list
+```
 
 The following bash script exstracts the records with ≥ 1% poly Ns to be included in the removal list:
+```
 $awk -F "\t" '{if ($5>=0.01) print $0}' raw-U-RVDBv30.0_sarscov2_N_counter.list| awk -F "|" '{print $3}' > raw-U-RVDBv30.0_SARSCoV2_N1.00_removeaccs
+```
 
-E.	Removing SARS-CoV-2 sequences with ≥ 1% poly Ns
+### E. Removing SARS-CoV-2 sequences with ≥ 1% poly Ns
 From the list generated from Step 7D, the list of fasta headers is generated by the following bash script:
+```
 $awk -F "|" 'NR==FNR{a[$0];next}$3 in a' raw-U-RVDBv30.0_SARSCoV2_N1.00_removeaccs raw-U-RVDBv30.0_header | sed 's/>//' > raw-U-RVDBv30.0_SARSCoV2_N1.00_remove_header
+```
 
-The fasta headers indicating to  ≥ 1% poly Ns are used to remove from the RVDB release by the following bash script:
+The fasta headers indicating to ≥ 1% poly Ns are used to remove from the RVDB release by the following bash script:
+```
 $filterbyname.sh in=raw-U-RVDBv30.0_sarscov2.fasta out=raw-U-RVDBv30.0_sarscov2_N1.00.fasta names=raw-U-RVDBv30.0_SARSCoV2_N1.00_remove_header include=f ow=t
+```
+`raw-U-RVDBv30.0_sarscov2_N1.00.fasta` contains the final SARS-CoV-2 collection.
 
-“raw-U-RVDBv30.0_sarscov2_N1.00.fasta” contains the final SARS-CoV-2 collection
-
-8.  Clustering
+## **8.  Clustering**
 We have implemented the different clustering algorithm and workflow to produce clustered C-RVDB (C-RVDB)  to overcome the challenge of SARS-CoV-2 redundancy (please see the detail information in the publication).
-In brief, SARS-CoV-2 sequences are aligned to the Wuhan strain (NCBI AccID: NC_045512.2) by minimap2. These with ≥98% identity are represented by NC_045512.2. The remnant sequences with ≤98% identity are subjected to the second stage clustering and collapsing by MMseqs2.
+In brief, SARS-CoV-2 sequences are aligned to the Wuhan strain (NCBI AccID: `NC_045512.2`) by minimap2. These with ≥98% identity are represented by `NC_045512.2`. The remnant sequences with ≤98% identity are subjected to the second stage clustering and collapsing by MMseqs2.
 For the non-SARS-CoV-2 sequences, they are not filtered by the ambibuity nucleotide screening (Step 7D-E) and directly subjected to the clustering and collapsing by MMseqs2.
 
-A.	Clustering of SARS-CoV-2 sequences
-NC_045512.2.fasta is included in “UPDATE_SCRIPTS_LOGS_PY3” folder.  To align SARS-CoV-2 sequences against NC_045512.2, please run the following bash script:
+### A. Clustering of SARS-CoV-2 sequences
+`NC_045512.2.fasta` is included in `UPDATE_SCRIPTS_LOGS_PY3` folder.  To align SARS-CoV-2 sequences against `NC_045512.2`, please run the following bash script:
+```
 $ minimap2 -t 20 ../ UPDATE_SCRIPTS_LOGS_PY3/NC_045512.2.fasta raw-U-RVDBv30.0_sarscov2_N1.00.fasta -o raw-U-RVDBv30.0_sarscov2_N1.00.fasta_minimap2_NC_045512.2.out
+```
 
-Where “-t 20” indicates the number of CPUs to run minimap2. Please assign the number according to your hardware spec.
-The following two bash scripts populate the lists containing the records of ≥ or < 98% identity against NC_045512.2:
+Where `-t 20` indicates the number of CPUs to run minimap2. Please assign the number according to your hardware spec.
+
+The following two bash scripts populate the lists containing the records of ≥ or < 98% identity against `NC_045512.2`:
+```
 $ awk -F "\t" '{if ($10/$11 >= 0.98) print $0}' raw-U-RVDBv30.0_sarscov2_N1.00.fasta_minimap2_NC_045512.2.out > raw-U-RVDBv30.0_sarscov2_A0.98_minimap2_NC_045512.2.out
 $ awk -F "\t" '{if ($10/$11 < 0.98) print $0}' raw-U-RVDBv30.0_sarscov2_N1.00.fasta_minimap2_NC_045512.2.out > raw-U-RVDBv30.0_sarscov2_B0.98_minimap2_NC_045512.2.out
+```
 
-The following two bash scripts generate the fasta headers of SARS-CoV-2 sequences with ≥ 98% identity against NC_045512.2:
+The following two bash scripts generate the fasta headers of SARS-CoV-2 sequences with ≥ 98% identity against `NC_045512.2`:
+```
 $awk -F "|" '{print $3}' raw-U-RVDBv30.0_sarscov2_A0.98_minimap2_NC_045512.2.out|sort|uniq > raw-U-RVDBv30.0_sarscov2_A0.98_minimap2_NC_045512.2_acc
 $awk -F "|" 'NR==FNR{a[$0];next}$3 in a' raw-U-RVDBv30.0 _sarscov2_A0.98_minimap2_NC_045512.2_acc raw-U-RVDBv30.0_header | sed 's/>//' > raw-U-RVDBv30.0_sarscov2_A0.98_minimap2_NC_045512.2_fasta_header
+```
 
-From the fasta headers, the SARS-CoV-2 sequences with < 98% identity are extracted and subjected to the clustering by MMseqs2:
+From the fasta headers, the SARS-CoV-2 sequences with < 98% identity are extracted and subjected to the clustering by `MMseqs2`:
+```
 $filterbyname.sh in=raw-U-RVDBv30.0_sarscov2_N1.00.fasta out=raw-U-RVDBv30.0_sarscov2_N1.00_B0.98_minimap2_NC_045512.2.fasta names=raw-U-RVDBv30.0_sarscov2_A0.98_minimap2_NC_045512.2_fasta_header include=f ow=t
 $ mmseqs easy-cluster raw-U-RVDBv$30.0_sarscov2_N1.00_B0.98_minimap2_NC_045512.2.fasta raw-C-RVDBv30.0_sarscov2_0.98 tmp --split-memory-limit 32G --cluster-mode 2 --cov-mode 1 --min-seq-id 0.98 --threads 20 -k 11
+```
 
-“--split-memory-limit 32G” assigns the RAM size used for dividing the target database in parts that fit into memory. “--threads 20” indicates the CPUs to be used for clustering. Please assign these two parameters according to your hareware spec.
- “-k 11” and “--min-seq-id 0.98” indicate the k-mer length and the identity threshold to be clustered into the same clade. These two parameters are the same as the old CD-HIT-EST algorithm to generate the similar clustering result.  Please refer to MMseqs2 user manual (https://mmseqs.com/latest/userguide.pdf), Page 72 for more detail.
-To suppress fragments from becoming representative sequences, it is recommended to use --cluster-mode 2 in conjunction with --cov-mode 1 to align with the older RVDB production pipeline that the representative in each clade has to be the longest sequence. Please refer to MMseqs2 user manual (https://mmseqs.com/latest/userguide.pdf), Page 71 for more detail.
+`--split-memory-limit 32G` assigns the RAM size used for dividing the target database in parts that fit into memory. `--threads 20` indicates the CPUs to be used for clustering. Please assign these two parameters according to your hareware spec.
+`-k 11` and `--min-seq-id 0.98` indicate the k-mer length and the identity threshold to be clustered into the same clade. These two parameters are the same as the old CD-HIT-EST algorithm to generate the similar clustering result.  Please refer to [MMseqs2 user manual](https://mmseqs.com/latest/userguide.pdf), Page 72 for more detail.
+To suppress fragments from becoming representative sequences, it is recommended to use `--cluster-mode 2` in conjunction with `--cov-mode 1` to align with the older RVDB production pipeline that the representative in each clade has to be the longest sequence. Please refer to [MMseqs2 user manual](https://mmseqs.com/latest/userguide.pdf), Page 71 for more detail.
 
-B.	Clustering of non-SARS-CoV-2 sequences
+### B. Clustering of non-SARS-CoV-2 sequences
 Before clustering non-SARS-CoV-2 sequences, the removal sequences list, which is consisted of the previous removal list (if any), current removal list determined by the manual review process, and the phage list, is used to remove the unwanted sequences. The removal process is done by the following bash scripts. 
-Firstly, please include the AccIDs to be removed from the RVDB release in the file named “v30.0_removeaccs_raw.txt”, which is determined by the manual review process:
+Firstly, please include the AccIDs to be removed from the RVDB release in the file named `v30.0_removeaccs_raw.txt`, which is determined by the manual review process:
+```
 $cat  <(awk -F "\t" '{print $3}' U-RVDBv30.0_phage_candidate.list) v30.0_removeaccs_raw.txt > v30.0_removeaccs_phage_raw.txt
+```
 
 The following bash scripts removes the redundant records and remove the space before and/or after AccID, if any. The final removal list is produced, and the raw one is removed to avoid any confusion:
+```
 $ cat v30.0_removeaccs_phage_raw.txt |tr -d "[:blank:]"|sort|uniq > v30.0_removeaccs.txt && rm v30.0_removeaccs_raw.txt
+```
 
-The following two bash script retrieve the fasta header of unwanted sequences, and remove them from the RVDB release: 
+The following two bash script retrieve the fasta header of unwanted sequences, and remove them from the RVDB release:
+```
 $ awk -F "|" 'NR==FNR{a[$0];next}$3 in a' v30.0_removeaccs.txt raw-U-RVDBv30.0_header | sed 's/>//' > raw-U-RVDBv30.0_header_for_remove_list
 $ filterbyname.sh in=raw-U-RVDBv30.0_nonsarscov2.fasta out=raw-U-RVDBv30.0_clean_nonsarscov2.fasta names=raw-U-RVDBv30.0_header_for_remove_list include=f ow=t
-“raw-U-RVDBv30.0_clean_nonsarscov2.fasta” contains the non-SARS-CoV-2 sequences ready for being clustered or consolidated with quality-checked SARS-CoV-2 sequences to make U-RVDBv30.0.
+```
+`raw-U-RVDBv30.0_clean_nonsarscov2.fasta` contains the non-SARS-CoV-2 sequences ready for being clustered or consolidated with quality-checked SARS-CoV-2 sequences to make U-RVDBv30.0.
 
 The following bash script clusters non-SARS-CoV-2 sequences by MMseqs2:
+```
 $ mmseqs easy-cluster raw-U-RVDBv30.0_clean_nonsarscov2.fasta C-RVDBv30.0_nonsarscov2 tmp --split-memory-limit 32G --cluster-mode 2 --cov-mode 1 --min-seq-id 0.98 --threads 20 -k 11
+```
 Please see Step 8A for the detail of MMseqs2 parameters
 
-9. Production of U-RVDB and C-RVDB
-A.	Production of U-RVDB
+## **9. Production of U-RVDB and C-RVDB**
+### A. Production of U-RVDB
 The following bash script combines non-SARS-CoV-2 and quality checked SARS-CoV-2 sequences to make U-RVDBv30.0 and remove duplicate sequences if existed
+```
 $ cat raw-U-RVDBv30.0_clean_nonsarscov2.fasta raw-U-RVDBv30.0_sarscov2_N1.00.fasta | seqkit rmdup -o U-RVDBv30.0.fasta -D duplicate_U-RVDBv30.0.txt
+```
+Where `raw-U-RVDBv30.0_sarscov2_N1.00.fasta` (from Step 7E) contains the quality-checked SARS-CoV-2 sequences with ≤ 1% ambiguity nucleotides. `duplicate_U-RVDBv30.0.txt` contains the records of duplicated sequences in U-RVDBv30.0. There should not be any duplicates.
 
-Where “raw-U-RVDBv30.0_sarscov2_N1.00.fasta” (from Step 7E) contains the quality-checked SARS-CoV-2 sequences with ≤ 1% ambiguity nucleotides. “duplicate_U-RVDBv30.0.txt” contains the records of duplicated sequences in U-RVDBv30.0. There should not be any duplicates.
-
-B.	Production of C-RVDB
-The following bash script combines clustered  non- (Step 8B) and SARS-CoV-2 (Step 8A) sequences to make the C-RVDB release:
+###B. Production of C-RVDB
+The following bash script combines clustered non-SARS-CoV-2 (Step 8B) and SARS-CoV-2 (Step 8A) sequences to make the C-RVDB release:
+```
 $cat C-RVDBv30.0_nonsarscov2_rep_seq.fasta raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta |seqkit rmdup -o C-RVDBv30.0.fasta -D duplicate_C-RVDBv30.0.txt
-Where “C-RVDBv30.0_nonsarscov2_rep_seq.fasta” (from Step 7E) and “raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta” contain the clustered non- and  SARS-CoV-2 sequences produced in Step 8B and 8A, respectively. “duplicate_C-RVDBv30.0.txt” contains the records of duplicated sequences in C-RVDBv30.0. There should not be any duplicates.
+```
+Where `C-RVDBv30.0_nonsarscov2_rep_seq.fasta` (from Step 7E) and `raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta` contain the clustered non-SARS-CoV-2 and SARS-CoV-2 sequences produced in Step 8B and 8A, respectively. `duplicate_C-RVDBv30.0.txt` contains the records of duplicated sequences in C-RVDBv30.0. There should not be any duplicates.
 
-10. Characterization 
-Overview. The “RVDB_characterization.py” script was used to partition the sequences into five Level 1 categories: exogenous viral (EX), endogenous nonretroviral (ENRV), endogenous retroviral (ERV), LTR-retrotransposon (LTR_Reto), and unassigned viral gene /fragments (Unassigned). This partitioning was done using some of the SEM-R positive keywords, and organizing them by categories. Sequences possessing headers with specific positive keywords from SEM-R screen were placed into the corresponding categories. For instance, the keywords “retrotranspos”,”retro transpos”,”retroelem”,”blastopia “,” copia “,” delta element”,” gipsy “,” gypsy element”,” gypsy like “,” gypsy type “, “insertion element”, ” mdg1 “, ” mdg3 “, ”micropia”, “ sire “,” ty element”, and “ ty insertion” were used to classify sequences as belonging to the LTR-retrotransposon category. There is also a regular expression for finding strings of the form “ ty” + either “1” or “3”, with / without a space, and there are also a handful of rules for pulling in the less common LTR-retrotransposons: the string “transpos” + either “ bel “, “ pao “, “ roo “, or “morgane”. There are similar combinations of keywords, regular expressions, and rules for the other four groups. 
+## **10. Characterization** 
+###Overview 
+The `RVDB_characterization.py` script was used to partition the sequences into five Level 1 categories: exogenous viral (EX), endogenous nonretroviral (ENRV), endogenous retroviral (ERV), LTR-retrotransposon (LTR_Reto), and unassigned viral gene /fragments (Unassigned). This partitioning was done using some of the SEM-R positive keywords, and organizing them by categories. Sequences possessing headers with specific positive keywords from SEM-R screen were placed into the corresponding categories. For instance, the keywords “retrotranspos”,”retro transpos”,”retroelem”,”blastopia “,” copia “,” delta element”,” gipsy “,” gypsy element”,” gypsy like “,” gypsy type “, “insertion element”, ” mdg1 “, ” mdg3 “, ”micropia”, “ sire “,” ty element”, and “ ty insertion” were used to classify sequences as belonging to the LTR-retrotransposon category. There is also a regular expression for finding strings of the form “ ty” + either “1” or “3”, with / without a space, and there are also a handful of rules for pulling in the less common LTR-retrotransposons: the string “transpos” + either “ bel “, “ pao “, “ roo “, or “morgane”. There are similar combinations of keywords, regular expressions, and rules for the other four groups. 
 
-Running RVDB_characterization.py. The RVDB_characterization.py script can be run by a single line in the command shell, containing python command, the script name, and then 5 parameters: the home or parent directory (one level below the update folder), the date tag for the update, the current version of the update, the name of the fasta file to be characterized (e.g. “U-RVDBv30.0.fasta”), and a filename containing a filterset, an accession list for a subset of sequences to be characterized. The last two parameters can be selected so that the script can be run not just on the base unclustered form of RVDB, but also the clustered form of RVDB, or any special-purpose sub-version created by the user. Please note, if all sequences from the supplied fasta file are to be characterized, there is no filterset and the final parameter can be a random letter (e.g. “NA”). Below is an example of running the script:
+###Running `RVDB_characterization.py` 
+The `RVDB_characterization.py script` can be run by a single line in the command shell, containing python command, the script name, and then 5 parameters: the home or parent directory (one level below the update folder), the date tag for the update, the current version of the update, the name of the fasta file to be characterized (e.g. `U-RVDBv30.0.fasta`), and a filename containing a filterset, an accession list for a subset of sequences to be characterized. The last two parameters can be selected so that the script can be run not just on the base unclustered form of RVDB, but also the clustered form of RVDB, or any special-purpose sub-version created by the user. Please note, if all sequences from the supplied fasta file are to be characterized, there is no filterset and the final parameter can be a random letter (e.g. “NA”). Below is an example of running the script:
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/RVDB_characterization.py . apr.2025 30.0 U-RVDBv30.0.fasta NA
-
-The counts for each group are recorded in a log file, $fastafilename”_char_output_log.txt”, which is in the current update folder. For example:
-RVDB/RVDBv30.0/U-RVDBv30.0_char_output_log.txt
-
-In addition, the script generates output files of headers for each of the categories. These are also written to the current update folder and are named $fastafilename”.”$group”.headers.txt”, for example:
+```
+The counts for each group are recorded in a log file, `"$fastafilename”_char_output_log.txt`, which is in the current update folder. For example: `RVDB/RVDBv30.0/U-RVDBv30.0_char_output_log.txt`
+In addition, the script generates output files of headers for each of the categories. These are also written to the current update folder and are named `"$fastafilename”.”$group”.headers.txt`, for example:
+```
 	RVDB/RVDBv30.0/RVDBv30.0.fasta.EX.headers.txt
 	RVDB/RVDBv30.0/U-RVDBv30.0.fasta.ENRV.headers.txt
 	RVDB/RVDBv30.0/U-RVDBv30.0.fasta.ERV.headers.txt
 	RVDB/RVDBv30.0/U-RVDBv30.0.fasta.LTR-RETO.headers.txt
 	RVDB/RVDBv30.0/U-RVDBv30.0.fasta.UNASSIGNED.headers.txt
+```
+Manual review of characterization output. In our characterization efforts, we did find it necessary to perform some final manual review. In particular, we found that some sequences that had been labelled by the `RVDB_characterization.py` script as endogenous nonretroviral, were in fact endogenous retroviral according to their name. Also, some of the sequences that had been labelled by the script as “viral gene/fragment” were in fact exogenous viral or LTR-retrotransposon. 
 
-Manual review of characterization output. In our characterization efforts, we did find it necessary to perform some final manual review. In particular, we found that some sequences that had been labelled by the RVDB_characterization.py script as endogenous nonretroviral, were in fact endogenous retroviral according to their name. Also, some of the sequences that had been labelled by the script as “viral gene/fragment” were in fact exogenous viral or LTR-retrotransposon. 
-
-11. Creation of RVDB SQL
-Having an SQL implementation of the RVDB is useful for the same reason that all SQL databases are useful – rapid and flexible querying of content. Most parameters by which one can query the RVDB SQL correspond to fields in the header, but in addition there are category (as defined using RVDB_characterization.py; see section 7) as well as sequence length parameters. The RVDB SQL database is created in sqlite form using the sqlite API in Python. The SQL database is created by calling the script “make_alter_build_sqlite3db_v2.py” in the following manner: 
+## **11. Creation of RVDB SQL**
+Having an SQL implementation of the RVDB is useful for the same reason that all SQL databases are useful – rapid and flexible querying of content. Most parameters by which one can query the RVDB SQL correspond to fields in the header, but in addition there are category (as defined using `RVDB_characterization.py`; see section 10) as well as sequence length parameters. The RVDB SQL database is created in sqlite form using the sqlite API in Python. The SQL database is created by calling the script `make_alter_build_sqlite3db_v2.py` in the following manner: 
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/make_alter_build_sqlite3db_v2.py . apr.2025 30.0 U-RVDBv30.0.fasta
+```
 
-12. Generation of release notes 
+## **12. Generation of release notes** 
 After both the unclustered and clustered forms of the database have been generated as fasta files, the release notes need to be generated. The release notes script exists to generate summary statistics as well as update information in a simple but standardized format. These statistics include total counts of sequences in each category (RefSeq Viral, RefSeq Viral neighbor, GenBank division, or TPA) as well as date (month and year) information for the download of RefSeq and GenBank flat files. The release notes scripts are called using the following two commands:
+```
 $python UPDATE_SCRIPTS_LOGS_PY3/create_relnotes.py . apr.2025 13.0 4 may 2025 apr 2025 apr 2025 U-RVDBv30.0.fasta 228 265
 $python E:/UPDATE_SCRIPTS_LOGS/create_relnotes.py . apr.2025 30.0 4 may 2025 apr 2025 apr 2025 C-RVDBv30.0.fasta 228 265
+```
 
-“.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “4 may 2025” are the day, month, and year for the update (usually the date of running of the create_relnotes.py script). The first “apr 2025” is the month and year of the GenBank download, while the second “apr 2025” is the month and year of the RefSeq download. Finally, “U-RVDBv30.0.fasta”and “C-RVDBv30.0.fasta” are the names of the input RVDB fasta files. “228” and “265” are RefSeq and GenBank release number, respectively. The script needs to be run twice, once with the name of the unclustered fasta file and once with the name of the clustered fasta file, because two release notes need to be generated. Note that once you have generated the release note, you also have to generate the checksum/MD5 value separately and paste it into the release notes. This can be accomplished in a single command. Please remove all whitespace characters before copying and pasting. 
+`.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `4 may 2025` are the day, month, and year for the update (usually the date of running of the `create_relnotes.py` script). The first `apr 2025` is the month and year of the GenBank download, while the second `apr 2025` is the month and year of the RefSeq download. Finally, `U-RVDBv30.0.fasta”and “C-RVDBv30.0.fasta` are the names of the input RVDB fasta files. `228` and `265` are RefSeq and GenBank release number, respectively. The script needs to be run twice, once with the name of the unclustered fasta file and once with the name of the clustered fasta file, because two release notes need to be generated. Note that once you have generated the release note, you also have to generate the checksum/MD5 value separately and paste it into the release notes. This can be accomplished in a single command.  
+```
 $md5sum $PathToRVDB > MD5_Output
+```
 So, for example:
+```
 $md5sum U-RVDBv30.0.fasta > U-RVDBv30.0.fasta.md5
 $md5sum C-RVDBv30.0.fasta > C-RVDBv30.0.fasta.md5
 $md5sum U-RVDBv30.0.sqlite.db > U-RVDBv30.0.fasta.md5
-
-And most of all, enjoy RVDB! 
+```
+** And most of all, enjoy RVDB! ** 
 
