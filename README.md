@@ -10,11 +10,11 @@ We highly recommend to create an isolated Python3 environment by package manager
 ### B.	Installation of prerequisites packages
 We have provided a YAML Ain't Markup Language (YAML) file named “RVDB_PY3.YAML” which contains the setup instruction for RVDB_PY3 running under Mamba environment.  To create a mamba environment named “rvdb_pipeline” and install all prerequisites, please prompt:
 ```
-$ mamba env create -n rvdb_pipeline -f RVDB_PY3.yaml`
+$ mamba env create -n rvdb_pipeline -f RVDB_PY3.yaml
 ```
 ### C.	Environment activation
 To activate “rvdb_pipeline” environment, please prompt:
 ```
-$ mamba activate rvdb_pipeline`
+$ mamba activate rvdb_pipeline
 ```
 That’s it. You are ready to proceed to Step 1.
