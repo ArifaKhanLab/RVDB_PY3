@@ -143,14 +143,20 @@ $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.
 >The third file (“c.log” ending) is a side-by-side list of all file counts, the official release notes counts and the downloaded + unzipped counts. 
 >The fourth file (“d.log” ending) is a side-by-side list of all file division counts, the official release notes counts and the downloaded + unzipped counts. This is a summary form of c.log, with totals by division rather than file.
 
-$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb
-Runs the positive keyword screen. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “poskw” is the type of screen, “gb” is the source database. Generates files ending in “pscreen” as output. All files generated as output are used as input for the sizemirna screen. 
+>```
+>$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb
+>```
+>Runs the positive keyword screen. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `poskw` is the type of screen, `gb` is the source >database. Generates files ending in `pscreen` as output. All files generated as output are used as input for the sizemirna screen. 
 
-$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb
-Runs the size/mirna screen. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.  “sizemirna” is the type of screen, “gb” is the source database. Two type of files are generated as output: those ending in “FLAG” and those ending in “OK”. Files ending in “OK” pass the sizemirna screen and are used as input for the negkw screen. 
+>```
+>$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb
+>```
+>Runs the size/mirna screen. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `sizemirna` is the type of screen, `gb”` is the source database. >Two type of files are generated as output: those ending in `FLAG` and those ending in `OK`. Files ending in `OK` pass the sizemirna screen and are used as input for the negkw screen. 
 
-$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
-Runs the negative keyword screen. “.” is the home or parent directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update. “negkw” is the type of screen, “gb” is the source database. Generated four types of files as output” those ending in “FLAG”, those ending in “OK”, those ending in “AMB”, and those ending in “VRL”. The files ending in “OK”, “AMB” (for “ambiguous”), and “VRL” (coming from the GenBank “VRL” division) can be manually reviewed (see below, section 5) to generate the U-RVDB. 
+>```
+>$python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
+>```
+>Runs the negative keyword screen. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `negkw` is the type of screen, `gb` is the source database. Generated four types of files as output” those ending in “FLAG”, those ending in “OK”, those ending in “AMB”, and those ending in “VRL”. The files ending in “OK”, “AMB” (for “ambiguous”), and “VRL” (coming from the GenBank “VRL” division) can be manually >reviewed (see below, section 5) to generate the U-RVDB. 
 
 4. Running the main pipeline – TPA. 
 The main pipeline consists of unzipping the TPA files and running the positive, size/mirna, and negative screens on the unzipped TPA files.
