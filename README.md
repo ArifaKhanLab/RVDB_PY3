@@ -297,7 +297,7 @@ $ filterbyname.sh in=raw-U-RVDBv30.0_sarscov2.fasta out=raw-U-RVDBv30.0_sarscov2
 ## **8.  Clustering**
 We have implemented the different clustering algorithm and workflow to produce clustered C-RVDB (C-RVDB)  to overcome the challenge of SARS-CoV-2 redundancy (please see the detail information in the publication).
 In brief, SARS-CoV-2 sequences are aligned to the Wuhan strain (NCBI AccID: `NC_045512.2`) by minimap2. These with ≥98% identity are represented by `NC_045512.2`. The remnant sequences with ≤98% identity are subjected to the second stage clustering and collapsing by MMseqs2.
-For the non-SARS-CoV-2 sequences, they are not filtered by the ambibuity nucleotide screening ([Step 7D](#d-scanning-the-ambiguity-nucleotide-base-in-sars-cov-2-sequences) to [Step 7E](#e-removing-sars-cov-2-sequences-with--1-poly-ns) and directly subjected to the clustering and collapsing by MMseqs2.
+For the non-SARS-CoV-2 sequences, they are not filtered by the ambibuity nucleotide screening ([Step 7D](#d-scanning-the-ambiguity-nucleotide-base-in-sars-cov-2-sequences) to [Step 7E](#e-removing-sars-cov-2-sequences-with--1-poly-ns)) and directly subjected to the clustering and collapsing by MMseqs2.
 
 ### A. Clustering of SARS-CoV-2 sequences
 `NC_045512.2.fasta` is included in `UPDATE_SCRIPTS_LOGS_PY3` folder.  To align SARS-CoV-2 sequences against `NC_045512.2`, please run the following bash script:
