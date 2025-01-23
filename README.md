@@ -54,13 +54,14 @@ binary
 prompt
 mget viral*genomic*gz
 ```
-**RefSeq viral neighbors.** This is one of only two parts that requires manually  downloading some files:
-Save the downloaded file in the Refseq data folder as “refseqviral_neighbors_mapping.$date.nbr”, where $date is the full date in “month.day.year” format (example “refseqviral_neighbors_mapping.apr.23.2025.nbr”) in the Refseq main folder.
+**RefSeq viral neighbors.** This is one of only two parts that requires manually downloading some files:
+Save the downloaded file in the Refseq data folder as `refseqviral_neighbors_mapping.$date.nbr`, where `$date` is the full date in `month.day.year` format (example `refseqviral_neighbors_mapping.apr.23.2025.nbr`) in the Refseq main folder.
+```
 $wget https://ftp.ncbi.nlm.nih.gov/genomes/Viruses/Viruses_RefSeq_and_neighbors_genome_data.tab -O refseqviral_neighbors_mapping.apr.23.2025.nbr
+```
+Open the `.nbr` file in Excel using the “delimited” option with only “tab” selected (this should be the default). Resave as a .csv (example `refseqviral_neighbors_mapping.apr.23.2025.csv`). You can delete the original `.nbr` file after completing this step.
 
-Open the .nbr file in Excel using the “delimited” option with only “tab” selected (this should be the default). Resave as a .csv (example “refseqviral_neighbors_mapping.apr.23.2025.csv”). You can delete the original .nbr file after completing this step.
-
-Phage. There is an list of phage keywords that are used to identify and remove phage sequences. It should be saved in the RefSeq main folder, log sub-folder, as “phage_kws.txt”. It contains the following search strings:
+**Phage.** There is an list of phage keywords that are used to identify and remove phage sequences. It should be saved in the RefSeq main folder, log sub-folder, as `phage_kws.txt`. It contains the following search strings:
 ‘ phage’
 ‘corticovir’
 ‘cystovir’
@@ -77,7 +78,8 @@ Phage. There is an list of phage keywords that are used to identify and remove p
 ‘siphovir’
 ‘tectivir’
 
-GenBank. Navigate to the Genbank main folder, log on to NCBI’s Genbank ftp site, ftp://ftp.ncbi.nih.gov/genbank , and download gb flat files from the following 10 divisions: ENV, HTC, INV, MAM, PLN, PRI, ROD, VRL, VRT. This can be done using the following ftp command:
+**GenBank.** Navigate to the Genbank main folder, log on to [NCBI Genbank ftp site](ftp://ftp.ncbi.nih.gov/genbank) , and download gb flat files from the following 10 divisions: ENV, HTC, INV, MAM, PLN, PRI, ROD, VRL, VRT. This can be done using the following ftp command:
+```
 $ftp ftp.ncbi.nih.gov
 anonymous
 anonymous
@@ -85,9 +87,10 @@ cd genbank
 binary
 prompt
 mget gbenv*seq.gz gbhtc*.seq.gz gbinv*.seq.gz gbmam*.seq.gz gbpln*.seq.gz gbpri*.seq.gz gbrod*.seq.gz gbvrl*.seq.gz gbvrt*.seq.gz
-
-Also, the official release notes must be downloaded from the GenBank website using a web browser. While this could be done using ftp, the name of the release notes file has to be passed as a parameter later, so it’s best to directly download it and save the file name for later. Visit: ftp://ftp.ncbi.nih.gov/genbank/ and download ”gbrel.txt”. Save this file in “gb_releasenotes_v$version_$month.$year.txt” format, for example gb_releasenotes_v265_apr.2025.txt. 
-TPA. Navigate to the TPA main folder, log on to NCBI’s TPA ftp site, ftp.ncbi.nih.gov/tpa/release , and download TPA sequence files tpa_cu.fsa_nt.gz and con_tpa_cu.fsa_nt.gz. Note that there is no meta-data and therefore not .gbff format files for TPA sequences. The download can be done using the following ftp command:
+```
+Also, the official release notes must be downloaded from the GenBank website using a web browser. While this could be done using ftp, the name of the release notes file has to be passed as a parameter later, so it’s best to directly download it and save the file name for later. Visit [NCBI Genbank ftp site](ftp://ftp.ncbi.nih.gov/genbank) and download `gbrel.txt`. Save this file in `gb_releasenotes_v$version_$month.$year.txt` format, for example `gb_releasenotes_v265_apr.2025.txt`. 
+**TPA.*** Navigate to the TPA main folder, log on to [NCBI TPA ftp site](ftp.ncbi.nih.gov/tpa/release), and download TPA sequence files `tpa_cu.fsa_nt.gz` and `con_tpa_cu.fsa_nt.gz`. Note that there is no meta-data and therefore not `.gbff` format files for TPA sequences. The download can be done using the following ftp command:
+```
 $ftp ftp.ncbi.nih.gov
 anonymous
 anonymous
@@ -96,8 +99,8 @@ cd release
 binary
 prompt
 mget *tpa*nt.gz
-
-3. Running the main pipeline – RefSeq and GenBank. 
+```
+## **3. Running the main pipeline – RefSeq and GenBank.** 
 The main pipeline performs the core series of operations on the downloaded RefSeq, GenBank, and TPA files. In order, this includes unzipping RefSeq viral, removing phage, pulling in viral neighbor annotation, identifying duplicates of RefSeq (original GenBank entries from which RefSeq entries were created), unzipping and formatting GenBank entries, running checkpoint2 to cross-reference GenBank file contents with the official release notes, and running the positive, size/mirna, and negative screens on GenBank files. 
 
 Main pipeline – RefSeq and GenBank - command block. Navigate to the parent folder (“RVDB” in this example). Use the following concatenated commands (described individually beneath the command block):
