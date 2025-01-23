@@ -127,10 +127,12 @@ $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.
 >$python UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0
 >```
 >Using the GenBank flat file metadata for RefSeq viral, finds the duplicate entries’ accessions (original entries, upon which RefSeq viral entries were based). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. Also uses the RefSeq viral neighbors mapping file to complete the mapping (here, `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseqviral_neighbors_mapping.apr.23.2025.csv`; this filename is hard-coded into the script). The neighbors are saved in the file (here `./RVDBv30.0/RefSeq_raw_data.apr.2025/neighbor_accs.txt`); this filename is hard-coded into the next script, which is the unzipping script. The RefSeq duplicate accessions are saved in the file `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseq_viral_originalaccs.txt` ; this filename is also hard-coded as input for the unzipping script. 
+
 >```
 >$python  UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
 >```
 >Unzips the GenBank division files, labels sequences that are RefSeq viral neighbors during the unzipping. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. 
+
 >```
 >$python  UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
 >```
