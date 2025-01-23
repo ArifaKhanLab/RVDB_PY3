@@ -1,6 +1,6 @@
 # RVDB_PY3
 This is the repository of RVDB production scripts written by Python3 to replace the scripts in RVDB old repository which were  written by Python 2. Additionally, several improvements and refinements were implemented since the old release. 
-# **Instructions for updating RVDB_PY3**
+# **Instructions for updating RVDB_PY3 by RVDB_PY3 scripts**
 
 ## **0.	Prerequisites**
 RVDB Python3 (RVDB_PY3) scripts requires several third-party packages for data processing and most importantly, quality checking and clustering SARS-CoV-2 sequences. The prerequisites and their installation instructions are described as below.
