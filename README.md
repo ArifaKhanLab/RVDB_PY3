@@ -131,12 +131,12 @@ These scripts called in the command block above do the following:
 >Using the GenBank flat file metadata for RefSeq viral, finds the duplicate entries’ accessions (original entries, upon which RefSeq viral entries were based). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. Also uses the RefSeq viral neighbors mapping file to complete the mapping (here, `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseqviral_neighbors_mapping.apr.23.2025.csv`; this filename is hard-coded into the script). The neighbors are saved in the file (here `./RVDBv30.0/RefSeq_raw_data.apr.2025/neighbor_accs.txt`); this filename is hard-coded into the next script, which is the unzipping script. The RefSeq duplicate accessions are saved in the file `./RVDBv30.0/RefSeq_raw_data.apr.2025/refseq_viral_originalaccs.txt` ; this filename is also hard-coded as input for the unzipping script. 
 
 >```
->$ python  UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
+>$ python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb
 >```
 >Unzips the GenBank division files, labels sequences that are RefSeq viral neighbors during the unzipping. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. 
 
 >```
->$ python  UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
+>$ python UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt
 >```
 >`.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gb_releasenotes_v265_apr.2025.txt` is the name of the release notes file that was >downloaded from the GenBank ftp site. 
 Runs checkpoint2, generates four output files: `./RVDB[version]/GenBank_raw_data_month.year/log/[version]_checkpt2[a,b,c,d].log`. Note, the names of unzipped files are hard-coded into the semantic screen script that is called next: `SEM-R_june62018_PIPE.py`, which is >described below. 
@@ -333,7 +333,7 @@ To suppress fragments from becoming representative sequences, it is recommended 
 Before clustering non-SARS-CoV-2 sequences, the removal sequences list, which is consisted of the previous removal list (if any), current removal list determined by the manual review process, and the phage list, is used to remove the unwanted sequences. The removal process is done by the following bash scripts. 
 Firstly, please include the AccIDs to be removed from the RVDB release in the file named `v30.0_removeaccs_raw.txt`, which is determined by the manual review process:
 ```
-$ cat  <(awk -F "\t" '{print $3}' U-RVDBv30.0_phage_candidate.list) v30.0_removeaccs_raw.txt > v30.0_removeaccs_phage_raw.txt
+$ cat <(awk -F "\t" '{print $3}' U-RVDBv30.0_phage_candidate.list) v30.0_removeaccs_raw.txt > v30.0_removeaccs_phage_raw.txt
 ```
 
 The following bash scripts removes the redundant records and remove the space before and/or after AccID, if any. The final removal list is produced, and the raw one is removed to avoid any confusion:
