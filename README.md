@@ -192,7 +192,7 @@ Firstly, navigate to the RVDB release folder (RVDBv30.0 in this example):
 ```
 $ cd RVDBv30.0
 ```
-###A. Taxonomy-based phage removal
+### A. Taxonomy-based phage removal
 This step contains the retrieval of all phage-associated taxonomy IDs (TaxIDs) down to the species level, cross- referencing phage-associated TaxIDs to accession IDs (AccIDs), and filtrating phage-associated AccIDS from raw-U-RVDB.
 
 First, navigate to the RVDB sub-directory (`RVDBv30.0` in this example), and prompt the following commands:
@@ -225,10 +225,10 @@ $tail -n +2 RVDBv30.0.new.tsv > RVDBv30.0.new.tsv_noheader
 $ join -1 2 -2 2 -t $'\t' -o 1.1,2.2,1.2,1.3 <(awk -F "|" '{print $0}' RVDBv30.0.new.tsv_noheader|sort -k 2,2) <(sort -k 2,2 allphage_acc.list) > U-RVDBv30.0_phage_newly-added.list
 ```
 
-###B. Post-editing the newly-added list
+### B. Post-editing the newly-added list
 The purposes to post-edit the newly-added list are to remove the following entries to reduce the burdon of manual review process (Step5): 
 1.The SARS-CoV-2 records from newly-added list since they are abundant and truly viral, 
-2.Non-viral records manually identified in the previous RVDB release(s), if any, and 
+2.Non-viral records manually identified in the previous RVDB release(s), if any, and, 
 3.The phage-associated records identified in the previousstep to be excluded. To be noted the records removed in 2) and 3) are retained and handled by the downstream process since they are bona-fide unwanted and/or non-viral sequences to be removed from the final RVDB release.
 
 The following bash script removes millions of SARS-CoV-2 records from the newly-added list:
