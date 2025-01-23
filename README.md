@@ -42,7 +42,7 @@ $cd GenBank_raw_data_apr.2025
 $mkdir log && mkdir scripts && mkdir poskw_out_apr.2025 && mkdir sizemirna_out_ apr.2025 && mkdir negkw_out_ apr.2025
 ```
 ## **2. Download raw sequences from NCBI FTP**
-**RefSeq viral.** Navigate to the RefSeq main folder, log on to [NCBI’s RefSeq ftp site] (ftp.ncbi.nih.gov/refseq/release/viral), and download the four files: `viral.1.1.genomic.fna.gz (fasta file)`, `viral.2.1.genomic.fna.gz (fasta file)`, `viral.1.genomic.gbff.gz (genbank flat file)`, and `viral.2.genomic.gbff.gz (genbank flat file)`. This can be done using the ftp command:
+**RefSeq viral.** Navigate to the RefSeq main folder, log on to [NCBI’s RefSeq ftp site](ftp.ncbi.nih.gov/refseq/release/viral), and download the four files: `viral.1.1.genomic.fna.gz (fasta file)`, `viral.2.1.genomic.fna.gz (fasta file)`, `viral.1.genomic.gbff.gz (genbank flat file)`, and `viral.2.genomic.gbff.gz (genbank flat file)`. This can be done using the ftp command:
 ```
 $ftp ftp.ncbi.nih.gov
 anonymous
