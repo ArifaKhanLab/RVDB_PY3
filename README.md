@@ -367,7 +367,7 @@ The following bash script combines clustered non-SARS-CoV-2 [Step 8B](#b-cluster
 ```
 $cat C-RVDBv30.0_nonsarscov2_rep_seq.fasta raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta |seqkit rmdup -o C-RVDBv30.0.fasta -D duplicate_C-RVDBv30.0.txt
 ```
-Where `C-RVDBv30.0_nonsarscov2_rep_seq.fasta` (from Step 7E) and `raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta` contain the clustered non-SARS-CoV-2 and SARS-CoV-2 sequences produced in Step 8B and 8A, respectively. `duplicate_C-RVDBv30.0.txt` contains the records of duplicated sequences in C-RVDBv30.0. There should not be any duplicates.
+Where `C-RVDBv30.0_nonsarscov2_rep_seq.fasta` (from [Step 7E](#e-removing-sars-cov-2-sequences-with-≥-1%-poly-Ns)) and `raw-C-RVDBv30.0_sarscov2_0.98_rep_seq.fasta` contain the clustered non-SARS-CoV-2 and SARS-CoV-2 sequences produced in Step 8B and 8A, respectively. `duplicate_C-RVDBv30.0.txt` contains the records of duplicated sequences in C-RVDBv30.0. There should not be any duplicates.
 
 ## **10. Characterization** 
 ### Overview 
