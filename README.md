@@ -108,21 +108,21 @@ The main pipeline performs the core series of operations on the downloaded RefSe
 $python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz && python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff && python  UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0 gbff 1000000 && python  UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0 && python UPDATE_SCRIPTS_LOGS_PY3/VDBunzip_reformat_gb_to_fasta_PIPE.py . apr.2025 30.0 gb && python UPDATE_SCRIPTS_LOGS_PY3/VDBupdate_checkpoint2_PIPE.py  . apr.2025 30.0 gb_releasenotes_v265_apr.2025.txt && python UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 poskw gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 sizemirna gb && python  UPDATE_SCRIPTS_LOGS_PY3/SEM-R_june62018_PIPE.py . apr.2025 30.0 negkw gb
 ```
 **Description of commands and scripts.** These scripts called in the command block above do the following: 
-```
-$python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
-```
->Takes the two RefSeq viral files and outputs a eukaryotic viral fasta file formatted with two lines per entry (header and sequences), as well as a phage file (same format). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. The directory for the update is, in this case, `./RVDBv30.0`. <br>
+>```
+>$python  UPDATE_SCRIPTS_LOGS_PY3/parse_raw_refseq_PIPE.py . apr.2025 30.0 viral.1.1.genomic.fna.gz viral.2.1.genomic.fna.gz 
+>```
+>>>Takes the two RefSeq viral files and outputs a eukaryotic viral fasta file formatted with two lines per entry (header and sequences), as well as a phage file (same format). `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. The directory for the update is, in this case, `./RVDBv30.0`.
 
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/multiple_gzunzip_PIPE.py . apr.2025 30.0 viral.1.genomic.gbff.gz viral.2.genomic.gbff.gz viral.genomic.gbff
 ```
 >Combines the two GenBank flat files for refseq viral into one. “.” is the home or parent  directory, “apr.2025” is the date of the update, “30.0” is the version of RVDB; these parameters are needed to identify the directory for the update.
-<br/>
+
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/fileops_PIPE.py . apr.2025 30.0  gbff 1000000
 ```
 >Splits the combined GenBank flat file into multiple files, so that each can be read into Python. `.` is the home or parent directory, `apr.2025` is the date of the update, `30.0` is the version of RVDB; these parameters are needed to identify the directory for the update. `gbff` is the file type used as input, and `1000000` is the number of entries to include in each split. 
-<br/>
+
 ```
 $python UPDATE_SCRIPTS_LOGS_PY3/rs_acc_mapping_PIPE.py . apr.2025 30.0
 ```
