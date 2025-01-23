@@ -88,8 +88,8 @@ binary
 prompt
 mget gbenv*seq.gz gbhtc*.seq.gz gbinv*.seq.gz gbmam*.seq.gz gbpln*.seq.gz gbpri*.seq.gz gbrod*.seq.gz gbvrl*.seq.gz gbvrt*.seq.gz
 ```
-Also, the official release notes must be downloaded from the GenBank website using a web browser. While this could be done using ftp, the name of the release notes file has to be passed as a parameter later, so it’s best to directly download it and save the file name for later. Visit [NCBI Genbank ftp site](ftp://ftp.ncbi.nih.gov/genbank) and download `gbrel.txt`. Save this file in `gb_releasenotes_v$version_$month.$year.txt` format, for example `gb_releasenotes_v265_apr.2025.txt`. 
-**TPA.** Navigate to the TPA main folder, log on to [NCBI TPA ftp site](ftp.ncbi.nih.gov/tpa/release), and download TPA sequence files `tpa_cu.fsa_nt.gz` and `con_tpa_cu.fsa_nt.gz`. Note that there is no meta-data and therefore not `.gbff` format files for TPA sequences. The download can be done using the following ftp command:
+Also, the official release note must be downloaded from the GenBank website using a web browser. While this could be done using ftp, the name of the release notes file has to be passed as a parameter later, so it’s best to directly download it and save the file name for later. [Click here](https://ftp.ncbi.nlm.nih.gov/genbank/gbrel.txt) to download `gbrel.txt`. Save this file in `gb_releasenotes_v$version_$month.$year.txt` format, for example `gb_releasenotes_v265_apr.2025.txt`. 
+**TPA.** Navigate to the TPA main folder, log on to [NCBI TPA ftp site](https://ftp.ncbi.nlm.nih.gov/tpa/release/), and download TPA sequence files `tpa_cu.fsa_nt.gz` and `con_tpa_cu.fsa_nt.gz`. Note that there is no meta-data and therefore not `.gbff` format files for TPA sequences. The download can be done using the following ftp command:
 ```
 $ftp ftp.ncbi.nih.gov
 anonymous
