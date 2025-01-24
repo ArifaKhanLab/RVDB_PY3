@@ -197,4 +197,3 @@ dependencies:
       - python-slugify==8.0.4
       - sqlalchemy==2.0.29
       - typing-extensions==4.11.0
-prefix: /home/a7032018/miniforge3/envs/rvdb_pipeline
