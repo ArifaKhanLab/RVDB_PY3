@@ -413,5 +413,9 @@ $ md5sum U-RVDBv30.0.fasta > U-RVDBv30.0.fasta.md5
 $ md5sum C-RVDBv30.0.fasta > C-RVDBv30.0.fasta.md5
 $ md5sum U-RVDBv30.0.sqlite.db > U-RVDBv30.0.fasta.md5
 ```
+## **Questions/Comments**
+
+If you have any questions or comments regarding RVDB nucleotidic databases, please contact [Arifa Khan](mailto:Arifa.Khan@fda.hhs.gov)
+
 **And most of all, enjoy RVDB!** 
 
