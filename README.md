@@ -8,9 +8,9 @@ RVDB Python 3 (RVDB_PY3) scripts requires several third-party packages for data 
 We highly recommend to create an isolated Python 3 environment by package managers such as Anaconda or Mamba. RVDB_PY3 was tested under the Python 3 environment create by Mamba. The Mamba instruction is available at  https://github.com/mamba-org/mamba?tab=readme-ov-file.
 
 ### B.	Installation of prerequisites packages
-We have provided a YAML Ain't Markup Language (YAML) file named “RVDB_PY3.YAML” which contains the setup instruction for RVDB_PY3 running under Mamba environment.  To create a mamba environment named “rvdb_pipeline” and install all prerequisites, please prompt:
+We have provided a YAML Ain't Markup Language (YAML) file named `rvb_py3.yaml` which contains the setup instruction for RVDB_PY3 running under Mamba environment.  To create a mamba environment named `rvdb_pipeline` and install all prerequisites, please prompt:
 ```
-$ mamba env create -n rvdb_pipeline -f RVDB_PY3.yaml
+$ mamba env create -n rvdb_pipeline -f rvdb_py3.yaml
 ```
 ### C.	Environment activation
 To activate “rvdb_pipeline” environment, please prompt:
